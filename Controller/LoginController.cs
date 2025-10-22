@@ -17,17 +17,17 @@ namespace APIChat.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] LoginModel login)
+        public async Task<IActionResult> Login([FromBody] Usuario usuario)
         {
-            if (login == null || string.IsNullOrEmpty(login.Email) || string.IsNullOrEmpty(login.Senha))
+            if (usuario == null || string.IsNullOrEmpty(usuario.Email) || string.IsNullOrEmpty(usuario.Senha))
             {
               return BadRequest(new { Mensagem = "Email e Senha sao obrigatorios." });
             }
 
-            var usuario = await _context.Usuarios
-                .FirstOrDefaultAsync(u => u.Email == login.Email && u.Senha == login.Senha);
+            var usuarioEncontrado = await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.Email == usuario.Email && u.Senha == usuario.Senha);
 
-            if (usuario == null)
+            if (usuarioEncontrado == null)
             {
                 return Unauthorized(new { Mensagem = "Usuario nao encontrado." });
             }
