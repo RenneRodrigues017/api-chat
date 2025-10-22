@@ -14,15 +14,17 @@ namespace APIChat.Controller
         {
             _appContext = appContext;
         }
-        
+
         // Use async Task<IActionResult> e ToListAsync()
         [HttpGet("RetornarUsuarios")]
         public async Task<IActionResult> RetornarUsuarios()
         {
             // O ToListAsync() é assíncrono e evita bloqueios
-            var usuarios = await _appContext.Usuarios.ToListAsync(); 
-            
+            var usuarios = await _appContext.Usuarios.ToListAsync();
+
             return Ok(usuarios);
         }
+
+        
     }
 }
