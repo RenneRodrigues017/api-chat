@@ -4,6 +4,7 @@ using APIChat.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APIChat.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251023023337_AlterandoClasseChamado")]
+    partial class AlterandoClasseChamado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,68 +112,6 @@ namespace APIChat.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Usuarios");
-                });
-
-            modelBuilder.Entity("ChamadosPorCategoria", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Categoria")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("RelatorioId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Total")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RelatorioId");
-
-                    b.ToTable("ChamadosPorCategoria");
-                });
-
-            modelBuilder.Entity("Relatorio", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<double>("TaxaResolucaoIA")
-                        .HasColumnType("float");
-
-                    b.Property<double>("TempoMedioResolucaoHoras")
-                        .HasColumnType("float");
-
-                    b.Property<int>("TotalChamadosAbertos")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TotalChamadosFechados")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Relatorios");
-                });
-
-            modelBuilder.Entity("ChamadosPorCategoria", b =>
-                {
-                    b.HasOne("Relatorio", null)
-                        .WithMany("ChamadosPorCategoria")
-                        .HasForeignKey("RelatorioId");
-                });
-
-            modelBuilder.Entity("Relatorio", b =>
-                {
-                    b.Navigation("ChamadosPorCategoria");
                 });
 #pragma warning restore 612, 618
         }

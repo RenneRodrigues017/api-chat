@@ -10,6 +10,8 @@ namespace APIChat.Data
         public DbSet<Chamado> Chamados { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<InteracaoIA> InteracoesIA { get; set; }
-        public DbSet<HistoricoChamado> HistoricosChamado { get; set; }
+
+        public DbSet<Relatorio> Relatorios { get; set; }
+    
     }
 }

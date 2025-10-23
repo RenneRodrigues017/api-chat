@@ -5,7 +5,8 @@ namespace APIChat.Models
     public enum Status
     {
         Aberto,
-        Resolvido
+        ResolvidoPorIA,
+        ResolvidoPorSuporte
     }
 
     public enum Prioridade

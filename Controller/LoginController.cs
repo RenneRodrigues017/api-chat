@@ -21,7 +21,7 @@ namespace APIChat.Controllers
         {
             if (usuario == null || string.IsNullOrEmpty(usuario.Email) || string.IsNullOrEmpty(usuario.Senha))
             {
-              return BadRequest(new { Mensagem = "Email e Senha sao obrigatorios." });
+                return BadRequest(new { Mensagem = "Email e Senha sao obrigatorios." });
             }
 
             var usuarioEncontrado = await _context.Usuarios
@@ -32,10 +32,35 @@ namespace APIChat.Controllers
                 return Unauthorized(new { Mensagem = "Usuario nao encontrado." });
             }
 
-            return Ok(new 
-            { 
+            return Ok(new
+            {
                 Mensagem = "Login realizado com sucesso!"
             });
+        }
+
+        [HttpPost("FinalizarChamado")]
+        public async Task<IActionResult> FinalizarChamado(Chamado chamado, Status status)
+        {
+            if (chamado == null || chamado.Id == 0)
+            {
+                return BadRequest(new { Mensagem = "Chamado invalido." });
+            }
+
+            var chamadoExistente = await _context.Chamados.FindAsync(chamado.Id);
+            if (chamadoExistente == null)
+            {
+                return NotFound(new { Mensagem = "Chamado nao encontrado." });
+            }
+
+            if (chamadoExistente.Status == Status.ResolvidoPorIA || chamadoExistente.Status == Status.ResolvidoPorSuporte)
+            {
+                return BadRequest(new { Mensagem = "Chamado ja esta finalizado." });
+            }
+            
+            chamadoExistente.Status = status;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Mensagem = "Chamado finalizado com sucesso!" });
         }
     }
 }
