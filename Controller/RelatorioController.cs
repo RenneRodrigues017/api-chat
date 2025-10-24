@@ -89,8 +89,8 @@ namespace APIChat.Controllers
                 TotalChamadosAbertos = totalAbertos,
                 TotalChamadosFechados = totalFechados,
                 
-                // 4. ATRIBUIÇÃO CORRIGIDA
-                TempoMedioResolucaoHoras = tempoMedioResolucaoMinutos, 
+               
+                TempoMedioResolucaoMinutos = tempoMedioResolucaoMinutos, 
                 
                 TaxaResolucaoIA = taxaResolucaoIA,
                 ChamadosPorCategoria = chamadosPorCategoria
