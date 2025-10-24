@@ -25,11 +25,11 @@ namespace APIChat.Controllers
             [FromQuery] DateTime dataFim)
         {
             DateTime inicioAjustado = dataInicio.Date;
-            DateTime fimAjustado = dataFim.Date.AddDays(1);
+            DateTime fimAjustado = dataFim.Date;
 
             var chamadosNoPeriodo = await _context.Chamados
-                .Where(c => c.DataAbertura >= inicioAjustado && 
-                            c.DataAbertura < fimAjustado)
+                .Where(c => c.DataAbertura.Date >= inicioAjustado && 
+                            c.DataAbertura.Date <= fimAjustado)
                 .ToListAsync();
 
             if (!chamadosNoPeriodo.Any())
