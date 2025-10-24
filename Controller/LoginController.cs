@@ -29,12 +29,12 @@ namespace APIChat.Controllers
 
             if (usuarioEncontrado == null)
             {
-                return Unauthorized(new { Mensagem = "Usuario nao encontrado." });
+                throw new UnauthorizedAccessException("Usuario nao encontrado.");
             }
 
             if (Cargo.Gerente != usuario.Cargo)
             {
-                return Unauthorized(new { Mensagem = "Acesso negado. Cargo invalido." });
+                throw new UnauthorizedAccessException("Acesso negado. Cargo invalido.");
             }
 
             return Ok(new
