@@ -4,6 +4,7 @@ using APIChat.Data;
 using APIChat.Models;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace APIChat.Controllers
 {
@@ -23,11 +24,12 @@ namespace APIChat.Controllers
             [FromQuery] DateTime dataInicio, 
             [FromQuery] DateTime dataFim)
         {
-            DateTime dataFimAjustada = dataFim.AddDays(1);
+            DateTime inicioAjustado = dataInicio.Date;
+            DateTime fimAjustado = dataFim.Date.AddDays(1);
 
             var chamadosNoPeriodo = await _context.Chamados
-                .Where(c => c.DataAbertura >= dataInicio && 
-                            c.DataAbertura < dataFimAjustada)
+                .Where(c => c.DataAbertura >= inicioAjustado && 
+                            c.DataAbertura < fimAjustado)
                 .ToListAsync();
 
             if (!chamadosNoPeriodo.Any())
