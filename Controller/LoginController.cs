@@ -29,7 +29,7 @@ namespace APIChat.Controllers
 
             if (usuarioEncontrado == null)
             {
-                throw new UnauthorizedAccessException("Usuario nao encontrado.");
+                throw new ArgumentNullException("Usuario nao encontrado.");
             }
 
             if (Cargo.Gerente != usuario.Cargo)
