@@ -1,45 +1,73 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using APIChat.Data; 
 using APIChat.Models;
-using Microsoft.EntityFrameworkCore;
-namespace APIChat.Controllers;
+using System.Linq;
+using System.Threading.Tasks;
 
-[ApiController]
-[Route("api/[controller]")]
-public class RelatorioController : ControllerBase
+namespace APIChat.Controllers
 {
-    private readonly AppDbContext _context;
-
-    public RelatorioController(AppDbContext context)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class RelatorioController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly AppDbContext _context;
 
-    [HttpGet("gerar")]
-    public async Task<ActionResult<Relatorio>> GerarRelatorio(
-        [FromQuery] DateTime dataInicio, 
-        [FromQuery] DateTime dataFim)
-    {
-        var chamadosNoPeriodo = _context.Chamados
-            .Where(c => c.DataAbertura >= dataInicio && c.DataAbertura <= dataFim)
-            .ToList();
-
-        if (!chamadosNoPeriodo.Any())
-            return NotFound("Nenhum chamado encontrado no período.");
-
-        int total = chamadosNoPeriodo.Count;
-        int resolvidosIA = chamadosNoPeriodo.Count(c => c.Status == Status.ResolvidoPorIA);
-
-        var relatorio = new Relatorio
+        public RelatorioController(AppDbContext context)
         {
-            TotalChamadosAbertos = chamadosNoPeriodo.Count(c => c.Status == Status.Aberto),
-            TotalChamadosFechados = chamadosNoPeriodo.Count(c => c.Status == Status.ResolvidoPorSuporte || c.Status == Status.ResolvidoPorIA),
-            TempoMedioResolucaoHoras = 0, // deixa 0 para simplificar
-            TaxaResolucaoIA = (double)resolvidosIA / total * 100,
-            ChamadosPorCategoria = new List<ChamadosPorCategoria>() // vazio, opcional
-        };
+            _context = context;
+        }
 
-        return Ok(relatorio);
+        [HttpGet("gerar")]
+        public async Task<ActionResult<Relatorio>> GerarRelatorio(
+            [FromQuery] DateTime dataInicio, 
+            [FromQuery] DateTime dataFim)
+        {
+            DateTime dataFimAjustada = dataFim.AddDays(1);
+
+            var chamadosNoPeriodo = await _context.Chamados
+                .Where(c => c.DataAbertura >= dataInicio && 
+                            c.DataAbertura < dataFimAjustada)
+                .ToListAsync();
+
+            if (!chamadosNoPeriodo.Any())
+            {
+                return NotFound("Nenhum chamado encontrado no período.");
+            }
+
+            int total = chamadosNoPeriodo.Count;
+            
+            int totalAbertos = chamadosNoPeriodo.Count(c => c.Status == Status.Aberto);
+            
+            int resolvidosIA = chamadosNoPeriodo.Count(c => c.Status == Status.ResolvidoPorIA);
+            int resolvidosSuporte = chamadosNoPeriodo.Count(c => c.Status == Status.ResolvidoPorSuporte);
+            int totalFechados = resolvidosIA + resolvidosSuporte;
+
+            double taxaResolucaoIA = 0;
+            if (total > 0)
+            {
+                taxaResolucaoIA = (double)resolvidosIA / total * 100;
+            }
+            
+            var chamadosPorCategoria = chamadosNoPeriodo
+                .GroupBy(c => c.Dispositivo.ToString())
+                .Select(g => new ChamadosPorCategoria
+                {
+                    Categoria = g.Key,
+                    Total = g.Count()
+                })
+                .ToList();
+
+            var relatorio = new Relatorio
+            {
+                TotalChamadosAbertos = totalAbertos,
+                TotalChamadosFechados = totalFechados,
+                TempoMedioResolucaoHoras = 0,
+                TaxaResolucaoIA = taxaResolucaoIA,
+                ChamadosPorCategoria = chamadosPorCategoria
+            };
+
+            return Ok(relatorio);
+        }
     }
-
 }
