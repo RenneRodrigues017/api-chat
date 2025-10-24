@@ -25,11 +25,16 @@ namespace APIChat.Controllers
             }
 
             var usuarioEncontrado = await _context.Usuarios
-                .FirstOrDefaultAsync(u => u.Email == usuario.Email && u.Senha == usuario.Senha);
+                .FirstOrDefaultAsync(u => u.Email == usuario.Email && u.Senha == usuario.Senha && u.Cargo == Cargo.Gerente);
 
             if (usuarioEncontrado == null)
             {
                 return Unauthorized(new { Mensagem = "Usuario nao encontrado." });
+            }
+
+            if (Cargo.Gerente != usuario.Cargo)
+            {
+                return Unauthorized(new { Mensagem = "Acesso negado. Cargo invalido." });
             }
 
             return Ok(new
@@ -38,7 +43,7 @@ namespace APIChat.Controllers
             });
         }
 
-        [HttpPost("FinalizarChamado")]
+        [HttpPost]
         public async Task<IActionResult> FinalizarChamado(Chamado chamado, Status status)
         {
             if (chamado == null || chamado.Id == 0)
@@ -74,6 +79,32 @@ namespace APIChat.Controllers
             {
                 return StatusCode(500, new { Mensagem = "Erro na conexão", Detalhes = ex.Message });
             }
+        }
+        [HttpPost]
+        public async Task<IActionResult> LoginUsuario([FromBody] Usuario usuario)
+        {
+            if (usuario == null || string.IsNullOrEmpty(usuario.Email) || string.IsNullOrEmpty(usuario.Senha))
+            {
+                return BadRequest(new { Mensagem = "Email e Senha sao obrigatorios." });
+            }
+
+            var usuarioEncontrado = await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.Email == usuario.Email && u.Senha == usuario.Senha && u.Cargo == Cargo.Usuario);
+
+            if (Cargo.Usuario != usuario.Cargo)
+            {
+                return Unauthorized(new { Mensagem = "Acesso negado. Cargo invalido." });
+            }   
+
+            if (usuarioEncontrado == null)
+            {
+                return Unauthorized(new { Mensagem = "Usuario nao encontrado." });
+            }
+
+            return Ok(new
+            {
+                Mensagem = "Login realizado com sucesso!"
+            });
         }
     }
 }
