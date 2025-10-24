@@ -20,26 +20,26 @@ public class RelatorioController : ControllerBase
         [FromQuery] DateTime dataInicio, 
         [FromQuery] DateTime dataFim)
     {
-        // 1. Aplicar o filtro de data
         var chamadosNoPeriodo = _context.Chamados
             .Where(c => c.DataAbertura >= dataInicio && c.DataAbertura <= dataFim)
-            .ToList(); 
-        if (!chamadosNoPeriodo.Any())
-        {
-            return NotFound("Nenhum chamado encontrado no período.");
-        }
+            .ToList();
 
-        // 2. CÁLCULO DAS MÉTRICAS (Exemplo simples)
-        var total = chamadosNoPeriodo.Count;
-        var resolvidosIA = chamadosNoPeriodo.Count(c => c.Status == Status.ResolvidoPorIA);
-        
+        if (!chamadosNoPeriodo.Any())
+            return NotFound("Nenhum chamado encontrado no período.");
+
+        int total = chamadosNoPeriodo.Count;
+        int resolvidosIA = chamadosNoPeriodo.Count(c => c.Status == Status.ResolvidoPorIA);
+
         var relatorio = new Relatorio
         {
-            TotalChamadosAbertos = total,
+            TotalChamadosAbertos = chamadosNoPeriodo.Count(c => c.Status == Status.Aberto),
             TotalChamadosFechados = chamadosNoPeriodo.Count(c => c.Status == Status.ResolvidoPorSuporte || c.Status == Status.ResolvidoPorIA),
+            TempoMedioResolucaoHoras = 0, // deixa 0 para simplificar
             TaxaResolucaoIA = (double)resolvidosIA / total * 100,
+            ChamadosPorCategoria = new List<ChamadosPorCategoria>() // vazio, opcional
         };
 
         return Ok(relatorio);
     }
+
 }
