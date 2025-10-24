@@ -3,9 +3,9 @@ namespace APIChat.Models
 {
     public enum Cargo
     {
-        Usuario,
-        Suporte,
-        Gerente
+        Usuario = 1,
+        Suporte = 2,
+        Gerente = 3
     }
     public class Usuario
     {
