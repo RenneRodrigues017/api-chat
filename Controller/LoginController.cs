@@ -56,11 +56,24 @@ namespace APIChat.Controllers
             {
                 return BadRequest(new { Mensagem = "Chamado ja esta finalizado." });
             }
-            
+
             chamadoExistente.Status = status;
             await _context.SaveChangesAsync();
 
             return Ok(new { Mensagem = "Chamado finalizado com sucesso!" });
+        }
+        [HttpGet("testar-conexao")]
+        public IActionResult TestarConexao()
+        {
+            try
+            {
+                int totalUsuarios = _context.Usuarios.Count();
+                return Ok(new { Mensagem = "Conexão OK!", TotalUsuarios = totalUsuarios });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Mensagem = "Erro na conexão", Detalhes = ex.Message });
+            }
         }
     }
 }
