@@ -8,7 +8,7 @@ public class Relatorio
     public int TotalChamadosFechados { get; set; }
     
     // Métricas de Desempenho
-    public double TempoMedioResolucaoHoras { get; set; } // MTTR
+    public double TempoMedioResolucaoMinutos{ get; set; } // MTTR
     
     // Métricas da IA
     public double TaxaResolucaoIA { get; set; } // % de chamados resolvidos pela IA
