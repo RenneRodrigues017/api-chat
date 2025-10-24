@@ -25,14 +25,14 @@ namespace APIChat.Controllers
             }
 
             var usuarioEncontrado = await _context.Usuarios
-                .FirstOrDefaultAsync(u => u.Email == usuario.Email && u.Senha == usuario.Senha && u.Cargo == Cargo.Gerente);
+                .FirstOrDefaultAsync(u => u.Email == usuario.Email && u.Senha == usuario.Senha);
 
             if (usuarioEncontrado == null)
             {
                 throw new ArgumentNullException("Usuario nao encontrado.");
             }
 
-            if (Cargo.Gerente != usuario.Cargo)
+            if (usuarioEncontrado.Cargo != Cargo.Gerente)
             {
                 throw new UnauthorizedAccessException("Acesso negado. Cargo invalido.");
             }
