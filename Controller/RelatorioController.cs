@@ -36,6 +36,30 @@ namespace APIChat.Controllers
             {
                 return NotFound("Nenhum chamado encontrado no período.");
             }
+            
+            // -----------------------------------------------------
+            // Lógica do Tempo Médio de Resolução
+            // -----------------------------------------------------
+            
+            // 1. Filtrar apenas os chamados que foram resolvidos (fechados)
+            var chamadosFechados = chamadosNoPeriodo
+                .Where(c => c.Status == Status.ResolvidoPorIA || c.Status == Status.ResolvidoPorSuporte)
+                .Where(c => c.DataFechamento.HasValue) // Garantir que a DataFechamento não é nula
+                .ToList();
+            
+            double tempoMedioResolucaoMinutos = 0;
+
+            if (chamadosFechados.Any())
+            {
+                // 2. Calcular a diferença de tempo em minutos para cada chamado fechado
+                var diferencasEmMinutos = chamadosFechados
+                    .Select(c => (c.DataFechamento.Value - c.DataAbertura).TotalMinutes)
+                    .ToList();
+
+                // 3. Calcular a média das diferenças
+                tempoMedioResolucaoMinutos = diferencasEmMinutos.Average();
+            }
+            // -----------------------------------------------------
 
             int total = chamadosNoPeriodo.Count;
             
@@ -64,7 +88,10 @@ namespace APIChat.Controllers
             {
                 TotalChamadosAbertos = totalAbertos,
                 TotalChamadosFechados = totalFechados,
-                TempoMedioResolucaoHoras = 0,
+                
+                // 4. ATRIBUIÇÃO CORRIGIDA
+                TempoMedioResolucaoHoras = tempoMedioResolucaoMinutos, 
+                
                 TaxaResolucaoIA = taxaResolucaoIA,
                 ChamadosPorCategoria = chamadosPorCategoria
             };
