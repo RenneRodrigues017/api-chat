@@ -1,11 +1,16 @@
 using APIChat.Data;
 using APIChat.Service;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.WriteIndented = true;
+});
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<ChamadoService>();
 builder.Services.AddScoped<UsuarioService>();
