@@ -37,7 +37,7 @@ namespace APIChat.Service
                 .ToListAsync();
         }
 
-        public async Task<Chamado> FinalizarChamado(Chamado chamado, Status status)
+        public async Task<Chamado> FinalizarChamado(Chamado chamado)
         {
             var chamadoExistente = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == chamado.Id);
             if (chamadoExistente == null)
@@ -45,7 +45,7 @@ namespace APIChat.Service
                 return null;
             }
 
-            chamadoExistente.Status = status;
+            chamadoExistente.Status = Status.ResolvidoPorSuporte;
             chamadoExistente.DataFechamento = DateTime.UtcNow;
 
             _context.Chamados.Update(chamadoExistente);

@@ -48,9 +48,9 @@ namespace APIChat
 
 
         [HttpPost("FinalizarChamado")]
-        public async Task<IActionResult> FinalizarChamado(Chamado chamado, Status status)
+        public async Task<IActionResult> FinalizarChamado(Chamado chamado)
         {
-            var resultado = await _chamadoService.FinalizarChamado(chamado, status);
+            var resultado = await _chamadoService.FinalizarChamado(chamado);
 
             if (resultado == null)
             {
