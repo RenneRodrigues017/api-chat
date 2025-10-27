@@ -16,7 +16,7 @@ namespace APIChat.Controllers
             _context = context;
         }
 
-    [HttpPost]
+    [HttpPost("Login")]
     public async Task<IActionResult> Login([FromBody] Usuario usuario)
     {
         if (usuario == null || string.IsNullOrEmpty(usuario.Email) || string.IsNullOrEmpty(usuario.Senha))
@@ -46,7 +46,7 @@ namespace APIChat.Controllers
         });
     }
 
-        [HttpPost]
+        [HttpPost("FinalizarChamado")]
         public async Task<IActionResult> FinalizarChamado(Chamado chamado, Status status)
         {
             if (chamado == null || chamado.Id == 0)
@@ -83,7 +83,7 @@ namespace APIChat.Controllers
                 return StatusCode(500, new { Mensagem = "Erro na conexão", Detalhes = ex.Message });
             }
         }
-        [HttpPost]
+        [HttpPost("LoginUsuario")]
         public async Task<IActionResult> LoginUsuario([FromBody] Usuario usuario)
         {
             if (usuario == null || string.IsNullOrEmpty(usuario.Email) || string.IsNullOrEmpty(usuario.Senha))
