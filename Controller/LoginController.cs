@@ -16,7 +16,7 @@ namespace APIChat.Controllers
             _context = context;
         }
 
-        [HttpPost]
+    [HttpPost]
     public async Task<IActionResult> Login([FromBody] Usuario usuario)
     {
         if (usuario == null || string.IsNullOrEmpty(usuario.Email) || string.IsNullOrEmpty(usuario.Senha))
@@ -32,14 +32,17 @@ namespace APIChat.Controllers
             return Unauthorized(new { Mensagem = "Email ou Senha incorretos. Tente novamente." });
         }
 
-        if (usuarioEncontrado.Cargo != Cargo.Gerente && usuarioEncontrado.Cargo != Cargo.Suporte)
-        {
-            return Unauthorized(new { Mensagem = "Acesso não autorizado. Cargo inválido para este usuário." });
-        }
+        var cargoDoUsuario = (Cargo)usuarioEncontrado.Cargo;
+
+            if (cargoDoUsuario != Cargo.Gerente && cargoDoUsuario != Cargo.Suporte)
+            {
+                return Unauthorized(new { Mensagem = "Acesso não autorizado. Cargo inválido para este usuário." });
+            }
+        
         return Ok(new
         {
             Mensagem = "Login realizado com sucesso!",
-            Cargo = usuarioEncontrado.Cargo 
+            Cargo = usuarioEncontrado.Cargo
         });
     }
 
