@@ -15,5 +15,7 @@ namespace APIChat.Models
         public string? Senha { get; set; }
         public DateTime DataCadastro { get; set; }  
         public Cargo Cargo { get; set; }
+
+        public ICollection<Chamado> Chamados { get; set; } = new List<Chamado>();
     }
 }

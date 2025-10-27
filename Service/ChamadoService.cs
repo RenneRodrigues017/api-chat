@@ -20,7 +20,9 @@ namespace APIChat.Service
 
         public async Task<List<Chamado>> RetornarChamados()
         {
-            return await _context.Chamados.ToListAsync();
+            return await _context.Chamados
+                        .Include(c => c.Usuario)
+                        .ToListAsync();
         }
 
         public async Task<IResult> CriarChamado(Chamado chamado)
@@ -33,13 +35,16 @@ namespace APIChat.Service
         public async Task<List<Chamado>> FiltrarChamados(Status status, Prioridade prioridade)
         {
             return await _context.Chamados
+                .Include(c => c.Usuario)
                 .Where(c => c.Status == status && c.Prioridade == prioridade)
                 .ToListAsync();
         }
 
         public async Task<Chamado> FinalizarChamado(Chamado chamado)
         {
-            var chamadoExistente = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == chamado.Id);
+            var chamadoExistente = await _context.Chamados
+                .Include(c => c.Usuario)
+                .FirstOrDefaultAsync(c => c.Id == chamado.Id);
             if (chamadoExistente == null)
             {
                 return null;

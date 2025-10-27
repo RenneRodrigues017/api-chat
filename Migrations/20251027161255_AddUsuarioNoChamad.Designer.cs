@@ -4,6 +4,7 @@ using APIChat.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APIChat.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251027161255_AddUsuarioNoChamad")]
+    partial class AddUsuarioNoChamad
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,6 +50,9 @@ namespace APIChat.Migrations
                     b.Property<int>("IdUsuario")
                         .HasColumnType("int");
 
+                    b.Property<int?>("NomeDoUsuarioId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Prioridade")
                         .HasColumnType("int");
 
@@ -55,7 +61,7 @@ namespace APIChat.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdUsuario");
+                    b.HasIndex("NomeDoUsuarioId");
 
                     b.ToTable("Chamados");
                 });
@@ -165,13 +171,11 @@ namespace APIChat.Migrations
 
             modelBuilder.Entity("APIChat.Models.Chamado", b =>
                 {
-                    b.HasOne("APIChat.Models.Usuario", "Usuario")
-                        .WithMany("Chamados")
-                        .HasForeignKey("IdUsuario")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("APIChat.Models.Usuario", "NomeDoUsuario")
+                        .WithMany()
+                        .HasForeignKey("NomeDoUsuarioId");
 
-                    b.Navigation("Usuario");
+                    b.Navigation("NomeDoUsuario");
                 });
 
             modelBuilder.Entity("ChamadosPorCategoria", b =>
@@ -179,11 +183,6 @@ namespace APIChat.Migrations
                     b.HasOne("Relatorio", null)
                         .WithMany("ChamadosPorCategoria")
                         .HasForeignKey("RelatorioId");
-                });
-
-            modelBuilder.Entity("APIChat.Models.Usuario", b =>
-                {
-                    b.Navigation("Chamados");
                 });
 
             modelBuilder.Entity("Relatorio", b =>
