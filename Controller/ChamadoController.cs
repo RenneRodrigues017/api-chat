@@ -14,7 +14,6 @@ namespace APIChat
     {
         private readonly ChamadoService _chamadoService;
         
-
         public ChamadoController( ChamadoService chamadoService)
         {
             _chamadoService = chamadoService;
