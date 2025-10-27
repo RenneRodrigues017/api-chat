@@ -25,18 +25,29 @@ namespace APIChat.Controllers
                 return BadRequest(new { Mensagem = "Email e Senha são obrigatórios." });
             }
 
-            var usuarioEncontrado = await _loginService.ValidarLogin(usuario.Email, usuario.Senha);
+            try
+            {
+                var usuarioEncontrado = await _loginService.ValidarLogin(usuario.Email, usuario.Senha);
 
-            if (usuarioEncontrado == null)
-            {
-                return Unauthorized(new { Mensagem = "Email ou Senha incorretos. Tente novamente." });
+                if (usuarioEncontrado == null)
+                {
+                    return Unauthorized(new { Mensagem = "Email ou Senha incorretos. Tente novamente." });
+                }
+
+                return Ok(new
+                {
+                    Mensagem = "Login realizado com sucesso!",
+                    Cargo = usuarioEncontrado.Cargo
+                });
             }
-            
-            return Ok(new
+            catch (UnauthorizedAccessException ex)
             {
-                Mensagem = "Login realizado com sucesso!",
-                Cargo = usuarioEncontrado.Cargo
-            });
+                return Unauthorized(new { Mensagem = ex.Message }); 
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { Mensagem = "Ocorreu um erro interno e inesperado no login." });
+            }
         }
 
         [HttpPost("LoginUsuario")]

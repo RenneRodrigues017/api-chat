@@ -32,7 +32,7 @@ namespace APIChat.Service
                 return usuario;
             }
 
-            return usuario;
+            throw new UnauthorizedAccessException("Usuário não autorizado. Cargo inválido.");
         }
 
         public async Task<Usuario> ValidarLoginUsuario(string email, string senha)
