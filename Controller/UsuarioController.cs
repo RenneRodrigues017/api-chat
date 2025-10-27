@@ -1,4 +1,5 @@
 using APIChat.Data;
+using APIChat.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore; // Adicionar este using
 
@@ -8,19 +9,22 @@ namespace APIChat.Controller
     [Route("api/[controller]")]
     public class UsuarioController : ControllerBase
     {
-        private readonly AppDbContext _appContext;
+        private readonly UsuarioService _usuarioService;
 
-        public UsuarioController(AppDbContext appContext)
+        public UsuarioController(UsuarioService usuarioService)
         {
-            _appContext = appContext;
+            _usuarioService = usuarioService;
         }
 
-        // Use async Task<IActionResult> e ToListAsync()
         [HttpGet("RetornarUsuarios")]
         public async Task<IActionResult> RetornarUsuarios()
         {
-            // O ToListAsync() é assíncrono e evita bloqueios
-            var usuarios = await _appContext.Usuarios.ToListAsync();
+            var usuarios = await _usuarioService.RetornarUsuarios();
+
+            if (usuarios == null || !usuarios.Any())
+            {
+                return NotFound(new { Mensagem = "Nenhum usuário encontrado." });
+            }
 
             return Ok(usuarios);
         }

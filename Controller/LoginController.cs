@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using APIChat.Models; 
 using APIChat.Data; 
 using Microsoft.EntityFrameworkCore;
+using APIChat.Service;
 
 namespace APIChat.Controllers
 {
@@ -9,80 +10,35 @@ namespace APIChat.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly LoginService  _loginService;
 
-        public LoginController(AppDbContext context)
+        public LoginController(LoginService loginService)
         {
-            _context = context;
+            _loginService = loginService;
         }
 
-    [HttpPost("Login")]
-    public async Task<IActionResult> Login([FromBody] Usuario usuario)
-    {
-        if (usuario == null || string.IsNullOrEmpty(usuario.Email) || string.IsNullOrEmpty(usuario.Senha))
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] Usuario usuario)
         {
-            return BadRequest(new { Mensagem = "Email e Senha são obrigatórios." });
+            if (usuario == null || string.IsNullOrEmpty(usuario.Email) || string.IsNullOrEmpty(usuario.Senha))
+            {
+                return BadRequest(new { Mensagem = "Email e Senha são obrigatórios." });
+            }
+
+            var usuarioEncontrado = await _loginService.ValidarLogin(usuario.Email, usuario.Senha);
+
+            if (usuarioEncontrado == null)
+            {
+                return Unauthorized(new { Mensagem = "Email ou Senha incorretos. Tente novamente." });
+            }
+            
+            return Ok(new
+            {
+                Mensagem = "Login realizado com sucesso!",
+                Cargo = usuarioEncontrado.Cargo
+            });
         }
 
-        var usuarioEncontrado = await _context.Usuarios
-            .FirstOrDefaultAsync(u => u.Email == usuario.Email && u.Senha == usuario.Senha);
-
-        if (usuarioEncontrado == null)
-        {
-            return Unauthorized(new { Mensagem = "Email ou Senha incorretos. Tente novamente." });
-        }
-
-        var cargoDoUsuario = (Cargo)usuarioEncontrado.Cargo;
-
-            if (cargoDoUsuario != Cargo.Gerente && cargoDoUsuario != Cargo.Suporte)
-            {
-                return Unauthorized(new { Mensagem = "Acesso não autorizado. Cargo inválido para este usuário." });
-            }
-        
-        return Ok(new
-        {
-            Mensagem = "Login realizado com sucesso!",
-            Cargo = usuarioEncontrado.Cargo
-        });
-    }
-
-        [HttpPost("FinalizarChamado")]
-        public async Task<IActionResult> FinalizarChamado(Chamado chamado, Status status)
-        {
-            if (chamado == null || chamado.Id == 0)
-            {
-                return BadRequest(new { Mensagem = "Chamado invalido." });
-            }
-
-            var chamadoExistente = await _context.Chamados.FindAsync(chamado.Id);
-            if (chamadoExistente == null)
-            {
-                return NotFound(new { Mensagem = "Chamado nao encontrado." });
-            }
-
-            if (chamadoExistente.Status == Status.ResolvidoPorIA || chamadoExistente.Status == Status.ResolvidoPorSuporte)
-            {
-                return BadRequest(new { Mensagem = "Chamado ja esta finalizado." });
-            }
-
-            chamadoExistente.Status = status;
-            await _context.SaveChangesAsync();
-
-            return Ok(new { Mensagem = "Chamado finalizado com sucesso!" });
-        }
-        [HttpGet("testar-conexao")]
-        public IActionResult TestarConexao()
-        {
-            try
-            {
-                int totalUsuarios = _context.Usuarios.Count();
-                return Ok(new { Mensagem = "Conexão OK!", TotalUsuarios = totalUsuarios });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Mensagem = "Erro na conexão", Detalhes = ex.Message });
-            }
-        }
         [HttpPost("LoginUsuario")]
         public async Task<IActionResult> LoginUsuario([FromBody] Usuario usuario)
         {
@@ -91,13 +47,7 @@ namespace APIChat.Controllers
                 return BadRequest(new { Mensagem = "Email e Senha sao obrigatorios." });
             }
 
-            var usuarioEncontrado = await _context.Usuarios
-                .FirstOrDefaultAsync(u => u.Email == usuario.Email && u.Senha == usuario.Senha && u.Cargo == Cargo.Usuario);
-
-            if (Cargo.Usuario != usuario.Cargo)
-            {
-                return Unauthorized(new { Mensagem = "Acesso negado. Cargo invalido." });
-            }   
+            var usuarioEncontrado = await _loginService.ValidarLoginUsuario(usuario.Email, usuario.Senha);
 
             if (usuarioEncontrado == null)
             {
@@ -108,6 +58,7 @@ namespace APIChat.Controllers
             {
                 Mensagem = "Login realizado com sucesso!"
             });
+
         }
     }
 }

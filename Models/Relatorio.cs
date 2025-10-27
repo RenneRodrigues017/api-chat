@@ -1,19 +1,15 @@
-// Projeto API (Models/RelatorioResumo.cs)
 
 public class Relatorio
 {
     public int Id { get; set; }
-    // Métricas de Volume
+
     public int TotalChamadosAbertos { get; set; }
     public int TotalChamadosFechados { get; set; }
-    
-    // Métricas de Desempenho
-    public double TempoMedioResolucaoMinutos{ get; set; } // MTTR
-    
-    // Métricas da IA
-    public double TaxaResolucaoIA { get; set; } // % de chamados resolvidos pela IA
-    
-    // Lista de dados para um Gráfico (Ex: Chamados por Categoria)
+
+    public double TempoMedioResolucaoMinutos{ get; set; } 
+
+    public double TaxaResolucaoIA { get; set; } 
+
     public List<ChamadosPorCategoria> ChamadosPorCategoria { get; set; } = new List<ChamadosPorCategoria>();
 }
 
