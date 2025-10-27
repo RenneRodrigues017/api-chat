@@ -17,31 +17,31 @@ namespace APIChat.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] Usuario usuario)
+    public async Task<IActionResult> Login([FromBody] Usuario usuario)
+    {
+        if (usuario == null || string.IsNullOrEmpty(usuario.Email) || string.IsNullOrEmpty(usuario.Senha))
         {
-            if (usuario == null || string.IsNullOrEmpty(usuario.Email) || string.IsNullOrEmpty(usuario.Senha))
-            {
-                return BadRequest(new { Mensagem = "Email e Senha sao obrigatorios." });
-            }
-
-            var usuarioEncontrado = await _context.Usuarios
-                .FirstOrDefaultAsync(u => u.Email == usuario.Email && u.Senha == usuario.Senha);
-
-            if (usuarioEncontrado == null)
-            {
-                throw new ArgumentNullException("Usuario nao encontrado.");
-            }
-
-            if (usuarioEncontrado.Cargo != Cargo.Gerente)
-            {
-                throw new UnauthorizedAccessException("Acesso negado. Cargo invalido.");
-            }
-
-            return Ok(new
-            {
-                Mensagem = "Login realizado com sucesso!"
-            });
+            return BadRequest(new { Mensagem = "Email e Senha são obrigatórios." });
         }
+
+        var usuarioEncontrado = await _context.Usuarios
+            .FirstOrDefaultAsync(u => u.Email == usuario.Email && u.Senha == usuario.Senha);
+
+        if (usuarioEncontrado == null)
+        {
+            return Unauthorized(new { Mensagem = "Email ou Senha incorretos. Tente novamente." });
+        }
+
+        if (usuarioEncontrado.Cargo != Cargo.Gerente && usuarioEncontrado.Cargo != Cargo.Suporte)
+        {
+            return Unauthorized(new { Mensagem = "Acesso não autorizado. Cargo inválido para este usuário." });
+        }
+        return Ok(new
+        {
+            Mensagem = "Login realizado com sucesso!",
+            Cargo = usuarioEncontrado.Cargo 
+        });
+    }
 
         [HttpPost]
         public async Task<IActionResult> FinalizarChamado(Chamado chamado, Status status)
