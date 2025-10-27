@@ -46,8 +46,8 @@ namespace APIChat
         }
 
 
-        [HttpPost("FinalizarChamado")]
-        public async Task<IActionResult> FinalizarChamado(Chamado chamado)
+        [HttpPut("FinalizarChamado")]
+        public async Task<IActionResult> FinalizarChamado([FromBody] Chamado chamado)
         {
             var resultado = await _chamadoService.FinalizarChamado(chamado);
 
