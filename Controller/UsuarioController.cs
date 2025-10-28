@@ -30,7 +30,7 @@ namespace APIChat.Controller
             return Ok(usuarios);
         }
 
-        [HttpPut("CadastrarUsuario")]
+        [HttpPost("CadastrarUsuario")]
         public async Task<IActionResult> CadastrarUsuario([FromBody] Usuario usuario)
         {
             if (usuario == null)
@@ -38,8 +38,28 @@ namespace APIChat.Controller
                 return BadRequest(new { Mensagem = "Dados do usuário inválidos." });
             }
 
-            await _usuarioService.CadastrarUsuario(usuario);
+            try
+            {
+                await _usuarioService.CadastrarUsuario(usuario);
+            }
+            catch (InvalidOperationException)
+            {
+                return Conflict(new { Mensagem = "Email já cadastrado." });
+            }
+
             return CreatedAtAction(nameof(RetornarUsuarios), new { id = usuario.Id }, usuario);
+        }
+
+        [HttpDelete("ExcluirUsuario/{id}")]
+        public async Task<IActionResult> ExcluirUsuario(int id)
+        {
+            var usuarioExcluido = await _usuarioService.ExcluirUsuario(id);
+            if (!usuarioExcluido)
+            {
+                return NotFound(new { Mensagem = "Usuário não encontrado." });
+            }
+
+            return Ok();
         }
     }
 }

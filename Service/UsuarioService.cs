@@ -23,9 +23,25 @@ namespace APIChat.Service
 
         public async Task CadastrarUsuario(Usuario usuario)
         {
+            if (_context.Usuarios.Any(u => u.Email == usuario.Email))
+            {
+                throw new InvalidOperationException("Email já cadastrado.");
+            }
             usuario.Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha);
             await _context.Usuarios.AddAsync(usuario);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> ExcluirUsuario(int id)
+        {
+            var usuario = await _context.Usuarios.FindAsync(id);
+            if (usuario != null)
+            {
+                _context.Usuarios.Remove(usuario);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        } 
     }
 }
