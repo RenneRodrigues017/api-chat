@@ -7,6 +7,12 @@ namespace APIChat.Models
         Suporte = 2,
         Gerente = 3
     }
+
+    public enum Ativo 
+    {
+        Inativo = 0,
+        Ativo = 1
+    }
     public class Usuario
     {
         public int Id { get; set; }
@@ -15,7 +21,7 @@ namespace APIChat.Models
         public string? Senha { get; set; }
         public DateTime DataCadastro { get; set; }  
         public Cargo Cargo { get; set; }
-
+        public Ativo Ativo { get; set; }
         public ICollection<Chamado> Chamados { get; set; } = new List<Chamado>();
     }
 }

@@ -45,7 +45,6 @@ namespace APIChat
             return Ok(chamados);
         }
 
-
         [HttpPut("FinalizarChamado")]
         public async Task<IActionResult> FinalizarChamado([FromBody] Chamado chamado)
         {
@@ -58,6 +57,7 @@ namespace APIChat
 
             return Ok(new { Mensagem = "Chamado finalizado com sucesso!" });
         }
+       
         /*[HttpGet("testar-conexao")]
         public IActionResult TestarConexao()
         {

@@ -20,5 +20,12 @@ namespace APIChat.Service
         {
             return await _context.Usuarios.ToListAsync();
         }
+
+        public async Task CadastrarUsuario(Usuario usuario)
+        {
+            usuario.Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha);
+            await _context.Usuarios.AddAsync(usuario);
+            await _context.SaveChangesAsync();
+        }
     }
 }
