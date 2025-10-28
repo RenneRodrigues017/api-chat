@@ -27,11 +27,6 @@ namespace APIChat.Service
                 return null;
             }
 
-            bool senhaValida = BCrypt.Net.BCrypt.Verify(senha, usuario.Senha);
-
-            if (!senhaValida)
-            return null;
-
             if (usuario.Cargo == Cargo.Gerente || usuario.Cargo == Cargo.Suporte)
             {
                 return usuario;
