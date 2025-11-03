@@ -28,8 +28,7 @@ namespace APIChat.Service
                 throw new InvalidOperationException("Email já cadastrado.");
             }
 
-            usuario.Status = Status.Ativo;
-
+            usuario.Status = StatusUsuario.Ativo;
 
             usuario.Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha);
             await _context.Usuarios.AddAsync(usuario);
