@@ -8,7 +8,7 @@ namespace APIChat.Models
         Gerente = 3
     }
 
-    public enum Ativo 
+    public enum Status
     {
         Inativo = 0,
         Ativo = 1
@@ -21,7 +21,7 @@ namespace APIChat.Models
         public string? Senha { get; set; }
         public DateTime DataCadastro { get; set; }  
         public Cargo Cargo { get; set; }
-        public Ativo Ativo { get; set; }
+        public Status Status { get; set; }
         public ICollection<Chamado> Chamados { get; set; } = new List<Chamado>();
     }
 }
