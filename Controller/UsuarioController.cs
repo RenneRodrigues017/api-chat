@@ -54,12 +54,12 @@ namespace APIChat.Controller
         public async Task<IActionResult> ExcluirUsuario(int id)
         {
             var usuarioExcluido = await _usuarioService.ExcluirUsuario(id);
-            if (!usuarioExcluido)
+           if (usuarioExcluido == false || !usuarioExcluido)
             {
                 return NotFound(new { Mensagem = "Usuário não encontrado." });
             }
 
-            return Ok();
+            return Ok(new { Mensagem = "Usuário excluído com sucesso." });
         }
     }
 }

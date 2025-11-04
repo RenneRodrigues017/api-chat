@@ -58,6 +58,25 @@ namespace APIChat.Service
 
             return chamadoExistente;
         }
+
+        public async Task<Chamado> FinalizarChamadoUsuario(Chamado chamado)
+        {
+            var chamadoExistente = await _context.Chamados
+                .Include(c => c.Usuario)
+                .FirstOrDefaultAsync(c => c.Id == chamado.Id);
+            if (chamadoExistente == null)
+            {
+                return null;
+            }
+
+            chamadoExistente.Status = Status.ResolvidoPorIA;
+            chamadoExistente.DataFechamento = DateTime.UtcNow;
+
+            _context.Chamados.Update(chamadoExistente);
+            await _context.SaveChangesAsync();
+
+            return chamadoExistente;
+        }
     }
 
 }
