@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using APIChat.Data;
@@ -27,6 +28,8 @@ namespace APIChat.Service
 
         public async Task<IResult> CriarChamado(Chamado chamado)
         {
+            chamado.DataAbertura = DateTime.UtcNow;     
+            chamado.Status = Status.Aberto;
             await _context.Chamados.AddAsync(chamado);
             await _context.SaveChangesAsync();
             return Results.Ok();
