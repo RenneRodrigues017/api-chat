@@ -28,7 +28,8 @@ namespace APIChat.Service
 
         public async Task<IResult> CriarChamado(Chamado chamado)
         {
-            chamado.DataAbertura = DateTime.Now;     
+            var timeZone = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
+            chamado.DataAbertura = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);     
             chamado.Status = Status.Aberto;
             await _context.Chamados.AddAsync(chamado);
             await _context.SaveChangesAsync();
