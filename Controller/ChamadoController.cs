@@ -57,6 +57,18 @@ namespace APIChat
 
             return Ok(new { Mensagem = "Chamado finalizado com sucesso!" });
         }
+        [HttpPut("FinalizarChamadoUsuario")]
+        public async Task<IActionResult> FinalizarChamadoUsuario([FromBody] Chamado chamado)
+        {
+            var resultado = await _chamadoService.FinalizarChamadoUsuario(chamado);
+
+            if (resultado == null)
+            {
+                return NotFound(new { Mensagem = "Chamado não encontrado." });
+            }
+
+            return Ok(new { Mensagem = "Chamado finalizado com sucesso!" });
+        }
        
         /*[HttpGet("testar-conexao")]
         public IActionResult TestarConexao()
