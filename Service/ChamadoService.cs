@@ -28,7 +28,7 @@ namespace APIChat.Service
 
         public async Task<IResult> CriarChamado(Chamado chamado)
         {
-            chamado.DataAbertura = DateTime.UtcNow;     
+            chamado.DataAbertura = DateTime.Now;     
             chamado.Status = Status.Aberto;
             await _context.Chamados.AddAsync(chamado);
             await _context.SaveChangesAsync();
