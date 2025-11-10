@@ -67,10 +67,11 @@ namespace APIChat.Controllers
             }
             
             var chamadosPorCategoria = chamadosNoPeriodo
-                .GroupBy(c => c.Dispositivo.ToString())
+                .GroupBy(c => new { c.Dispositivo, c.Status })
                 .Select(g => new ChamadosPorCategoria
                 {
-                    Categoria = g.Key,
+                    Categoria = g.Key.Dispositivo.ToString(),
+                    Status = g.Key.Status.ToString(),
                     Total = g.Count()
                 })
                 .ToList();

@@ -16,6 +16,7 @@ public class Relatorio
 public class ChamadosPorCategoria
 {
     public int Id { get; set; }
-    public string Categoria { get; set; }
+    public string? Categoria { get; set; }
+    public string? Status { get; set; }
     public int Total { get; set; }
 }
