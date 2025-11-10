@@ -40,7 +40,7 @@ namespace APIChat.Service
             var usuario = await _context.Usuarios.FindAsync(id);
             if (usuario != null)
             {
-                _context.Usuarios.Remove(usuario);
+                usuario.Status = StatusUsuario.Inativo;
                 await _context.SaveChangesAsync();
                 return true;
             }
