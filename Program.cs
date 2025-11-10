@@ -14,6 +14,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<ChamadoService>();
 builder.Services.AddScoped<UsuarioService>();
+builder.Services.AddScoped<LogService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

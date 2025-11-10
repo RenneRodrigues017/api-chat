@@ -12,6 +12,7 @@ namespace APIChat.Data
         public DbSet<InteracaoIA> InteracoesIA { get; set; }
 
         public DbSet<Relatorio> Relatorios { get; set; }
+        public DbSet<Log> Logs { get; set; }
     
     }
 }

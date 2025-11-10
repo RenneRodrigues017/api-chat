@@ -13,10 +13,12 @@ namespace APIChat.Service
     public class ChamadoService
     {
         private readonly AppDbContext _context;
+        private readonly LogService _logService;
 
-        public ChamadoService(AppDbContext context)
+        public ChamadoService(AppDbContext context, LogService logService)
         {
             _context = context;
+            _logService = logService;
         }
 
         public async Task<List<Chamado>> RetornarChamados()
@@ -29,8 +31,13 @@ namespace APIChat.Service
         public async Task<IResult> CriarChamado(Chamado chamado)
         {
             var brasilTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SA Eastern Standard Time");
-            chamado.DataAbertura = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, brasilTimeZone);     
+            chamado.DataAbertura = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, brasilTimeZone);
             chamado.Status = Status.Aberto;
+            await _logService.RegistrarAsync(
+                    usuarioId: chamado.IdUsuario,
+                    acao: "Criou um chamado",
+                    detalhes: $"Usuario com o ID: {chamado.IdUsuario} criou um chamado com a descrição: {chamado.Descricao}"
+                );
             await _context.Chamados.AddAsync(chamado);
             await _context.SaveChangesAsync();
             return Results.Ok();
@@ -56,6 +63,11 @@ namespace APIChat.Service
 
             chamadoExistente.Status = Status.ResolvidoPorSuporte;
             chamadoExistente.DataFechamento = DateTime.UtcNow;
+            await _logService.RegistrarAsync(
+                    usuarioId: chamado.IdUsuario,
+                    acao: "Finalizou um chamado",
+                    detalhes: $"Usuario com o ID: {chamado.IdUsuario} finalizou um chamado com a descrição: {chamado.Descricao}"
+                );
 
             _context.Chamados.Update(chamadoExistente);
             await _context.SaveChangesAsync();

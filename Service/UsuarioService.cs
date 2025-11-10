@@ -11,9 +11,11 @@ namespace APIChat.Service
     public class UsuarioService
     {
         private readonly AppDbContext _context;
-        public UsuarioService(AppDbContext context)
+        private readonly LogService _logService;
+        public UsuarioService(AppDbContext context, LogService logService)
         {
             _context = context;
+            _logService = logService;
         }
 
         public async Task<List<Usuario>> RetornarUsuarios()

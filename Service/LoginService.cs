@@ -11,16 +11,24 @@ namespace APIChat.Service
     public class LoginService
     {
         private readonly AppDbContext _context;
+        private readonly LogService _logService;
 
-        public LoginService(AppDbContext context)
+        public LoginService(AppDbContext context, LogService logService)
         {
             _context = context;
+            _logService = logService;
         }
 
         public async Task<Usuario> ValidarLogin(string email, string senha)
         {
             var usuario = await _context.Usuarios
                 .FirstOrDefaultAsync(u => u.Email == email && u.Senha == senha);
+
+                await _logService.RegistrarAsync(
+                    usuarioId: usuario?.Id,
+                    acao: "Criou um chamado",
+                    detalhes: $"Usuario com o Nome: {usuario?.Nome} fez login no sistema, data e hora: {DateTime.UtcNow}"
+                );
 
             if (usuario == null)
             {
@@ -39,6 +47,11 @@ namespace APIChat.Service
         {
             var usuario = await _context.Usuarios
                 .FirstOrDefaultAsync(u => u.Email == email && u.Senha == senha && u.Cargo == Cargo.Usuario);
+                await _logService.RegistrarAsync(
+                    usuarioId: usuario?.Id,
+                    acao: "Fazer Login",
+                    detalhes: $"Usuario com o Nome: {usuario?.Nome} fez login no sistema, data e hora: {DateTime.UtcNow}"
+                );
 
             if (usuario == null)
             {
